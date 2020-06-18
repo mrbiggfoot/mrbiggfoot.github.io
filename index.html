@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<link rel="stylesheet" type="text/css" href="css/tablesort.css">
+<link rel="stylesheet" type="text/css" href="css/styles.css">
+
+<script type="text/javascript" src="http://code.jquery.com/jquery-1.10.1.min.js"></script> 
+<script type="text/javascript" src="tablesort.js"></script> 
+
+<script type="text/javascript">
+// Builds the HTML Table out of myList.
+function buildHtmlTable(selector) {
+  $.getJSON('https://cors-anywhere.herokuapp.com/http://elevenlogcollector-env.js6z6tixhb.us-west-2.elasticbeanstalk.com/ElevenServerLiteSnapshot', function(data) {
+    var myList = data.OnlineUses;
+    var columns = addAllColumnHeaders(myList, selector);
+
+    for (var i = 0; i < myList.length; i++) {
+      var row$ = $('<tr/>');
+      for (var colIndex = 0; colIndex < columns.length; colIndex++) {
+        var cellValue = myList[i][columns[colIndex]];
+        if (cellValue == null) cellValue = "";
+        row$.append($('<td/>').html(cellValue));
+      }
+      $(selector).append(row$);
+    }
+    $(selector).tablesort();
+  }); 
+}
+
+// Adds a header row to the table and returns the set of columns.
+// Need to do union of keys from all records as some records may not contain
+// all records.
+function addAllColumnHeaders(myList, selector) {
+  var columnSet = [];
+  var strColumns = [];
+
+  for (var i = 0; i < myList.length; i++) {
+    var rowHash = myList[i];
+    for (var key in rowHash) {
+      if ($.inArray(key, columnSet) == -1) {
+        columnSet.push(key);
+        if (isNaN(rowHash[key])) {
+          strColumns[key] = 1;
+        }
+      }
+    }
+  }
+  var headerTr$ = $('<tr/>');
+  for (var i in columnSet) {
+    if (columnSet[i] in strColumns) {
+      headerTr$.append($('<th class="table-sort"/>').html(columnSet[i]));
+    } else {
+      headerTr$.append($('<th class="table-sort-num"/>').html(columnSet[i]));
+    }
+  }
+  $(selector).append($('<thead/>').html(headerTr$));
+
+  return columnSet;
+}
+</script>
+
+</head>
+
+<body onLoad="buildHtmlTable('#players')">
+<h1 align="center">Eleven Table Tennis VR players online</h1>
+<table id="players" class="table-sort table-sort-search">
+</table>
+
+</body>
+
+</html>
