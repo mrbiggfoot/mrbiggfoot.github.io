@@ -2,17 +2,20 @@
 <html>
 
 <head>
+<meta charset="utf-8"/>
 <link rel="stylesheet" type="text/css" href="css/tablesort.css">
 <link rel="stylesheet" type="text/css" href="css/styles.css">
 
 <script type="text/javascript" src="https://code.jquery.com/jquery-1.10.1.min.js"></script>
-<script type="text/javascript" src="/tablesort.js"></script>
+<script type="text/javascript" src="tablesort.js"></script>
 
 <script type="text/javascript">
 // Builds the HTML Table out of myList.
 function buildHtmlTable(selector) {
   $.getJSON('https://cors-anywhere.herokuapp.com/http://elevenlogcollector-env.js6z6tixhb.us-west-2.elasticbeanstalk.com/ElevenServerLiteSnapshot', function(data) {
     var myList = data.OnlineUses;
+    appendRoomInfo(myList, data.UsersInRooms);
+
     var columns = addAllColumnHeaders(myList, selector);
 
     for (var i = 0; i < myList.length; i++) {
@@ -26,6 +29,20 @@ function buildHtmlTable(selector) {
     }
     $(selector).tablesort();
   });
+}
+
+function appendRoomInfo(myList, usersInRooms) {
+  var userNameSet = [];
+  for (var i = 0; i < usersInRooms.length; i++) {
+    userNameSet.push(usersInRooms[i]['UserName']);
+  }
+  for (var i = 0; i < myList.length; i++) {
+    if ($.inArray(myList[i]['UserName'], userNameSet) != -1) {
+      myList[i]['InRoom'] = '<i>in room</i>';
+    } else {
+      myList[i]['InRoom'] = '';
+    }
+  }
 }
 
 // Adds a header row to the table and returns the set of columns.
