@@ -57,9 +57,9 @@ function addAllColumnHeaders(myList, selector) {
     for (var key in rowHash) {
       if ($.inArray(key, columnSet) == -1) {
         columnSet.push(key);
-        if (isNaN(rowHash[key])) {
-          strColumns[key] = 1;
-        }
+      }
+      if (isNaN(rowHash[key])) {
+        strColumns[key] = 1;
       }
     }
   }
