@@ -11,7 +11,7 @@
 
 <script type="text/javascript">
 // Builds the HTML Table out of myList.
-function buildHtmlTable(selector) {
+function buildHtmlTable(selector, total) {
   $.getJSON('https://cors-anywhere.herokuapp.com/http://elevenlogcollector-env.js6z6tixhb.us-west-2.elasticbeanstalk.com/ElevenServerLiteSnapshot', function(data) {
     var myList = data.OnlineUses;
     appendRoomInfo(myList, data.UsersInRooms);
@@ -28,6 +28,7 @@ function buildHtmlTable(selector) {
       $(selector).append(row$);
     }
     $(selector).tablesort();
+    $(total).append($('<h1 align="center"/>').html('Eleven Table Tennis: ' + myList.length + ' players online'));
   });
 }
 
@@ -79,8 +80,8 @@ function addAllColumnHeaders(myList, selector) {
 
 </head>
 
-<body onLoad="buildHtmlTable('#players')">
-<h1 align="center">Eleven Table Tennis VR players online</h1>
+<body onLoad="buildHtmlTable('#players', '#total')">
+<div id="total"></div>
 <h3 align="center"><a href="beta.html">For BETA players click here</a></h3>
 <table id="players" class="table-sort table-sort-search">
 </table>
