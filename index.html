@@ -11,12 +11,14 @@
 
 <script type="text/javascript">
 // Builds the HTML Table out of myList.
-function buildHtmlTable(selector, total) {
+function buildHtmlTable(selector, total, stats) {
   $.getJSON('https://cors-anywhere.herokuapp.com/http://elevenlogcollector-env.js6z6tixhb.us-west-2.elasticbeanstalk.com/ElevenServerLiteSnapshot', function(data) {
     var myList = data.OnlineUses;
     appendRoomInfo(myList, data.UsersInRooms);
 
     var columns = addAllColumnHeaders(myList, selector);
+    var deviceSet = [];
+    var inRoom = 0;
 
     for (var i = 0; i < myList.length; i++) {
       var row$ = $('<tr/>');
@@ -26,9 +28,25 @@ function buildHtmlTable(selector, total) {
         row$.append($('<td/>').html(cellValue));
       }
       $(selector).append(row$);
+      var deviceName = myList[i][columns[1]];
+      if (deviceName == null || deviceName == "") deviceName = myList[i][columns[2]];
+      if (isNaN(deviceSet[deviceName])) {
+        deviceSet[deviceName] = 1;
+      } else {
+        deviceSet[deviceName]++;
+      }
+      if (myList[i]['InRoom'] != '') {
+        inRoom++;
+      }
     }
     $(selector).tablesort();
     $(total).append($('<h1 align="center"/>').html('Eleven Table Tennis: ' + myList.length + ' players online'));
+    var st = "";
+    for (var dev in deviceSet) {
+      st += dev + ": " + deviceSet[dev].toString() + ", ";
+    }
+    st += "in room: " + inRoom.toString();
+    $(stats).append($('<pre style="font-family: Courier New; font-size: small"/>').html(st));
   });
 }
 
@@ -80,8 +98,9 @@ function addAllColumnHeaders(myList, selector) {
 
 </head>
 
-<body onLoad="buildHtmlTable('#players', '#total')">
+<body onLoad="buildHtmlTable('#players', '#total', '#stats')">
 <div id="total"></div>
+<div id="stats" align="center"></div>
 <table id="players" class="table-sort table-sort-search">
 </table>
 
