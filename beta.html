@@ -12,7 +12,7 @@
 <script type="text/javascript">
 // Builds the HTML Table out of myList.
 function buildHtmlTable(selector, total) {
-  $.getJSON('https://cors-anywhere.herokuapp.com/http://elevenlogcollector-env.js6z6tixhb.us-west-2.elasticbeanstalk.com/ElevenServerLiteSnapshot2', function(data) {
+  $.getJSON('https://api.codetabs.com/v1/proxy/?quest=http://elevenlogcollector-env.js6z6tixhb.us-west-2.elasticbeanstalk.com/ElevenServerLiteSnapshot2', function(data) {
     var myList = data.OnlineUses;
     appendRoomInfo(myList, data.UsersInRooms);
 
